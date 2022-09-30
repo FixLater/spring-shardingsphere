@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface UserService {
 
-    User save(User u);
+    Boolean save(User u);
     
     List<User> findAll();
 //

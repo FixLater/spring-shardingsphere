@@ -12,6 +12,7 @@
         <tomcat.version>7.0.99</tomcat.version>
         <shardingsphere.version>5.2.0</shardingsphere.version>
         <spring.version>4.1.7.RELEASE</spring.version>
+        <mybatis.version>3.2.4</mybatis.version>
     </properties>
     <packaging>war</packaging>
 
@@ -60,15 +61,16 @@
         </dependency>
 
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <version>5.0.2.Final</version>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-spring</artifactId>
+            <version>1.2.2</version>
         </dependency>
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>4.3.0.Final</version>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>${mybatis.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.apache.shardingsphere</groupId>
             <artifactId>shardingsphere-jdbc-core-spring-namespace</artifactId>

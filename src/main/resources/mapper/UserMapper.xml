@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hyk.sharding.mapper.UserMapper" >
+  <resultMap id="resultMap" type="com.hyk.sharding.entity.User" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="age" property="age" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <insert id="save">
+    insert into t_user (id,name,age,school_id) values (#{id},#{name},#{age},#{schoolId})
+  </insert>
+  
+  <select id="findAll" resultMap="resultMap">
+   select <include refid="columnsName"/> from t_user order by id
+  </select>
+
+    <select id="findAllBySchoolIdList" resultMap="resultMap">
+        select <include refid="columnsName"/> from t_user where school_id in (
+        <foreach collection="list" item="item" separator=",">
+            #{item}
+        </foreach>
+        ) order by id
+    </select>
+  
+  <select id="findByUserIds" resultMap="resultMap">
+    select <include refid="columnsName"/> from t_user where id in (
+     <foreach collection="list" item="item" separator=",">
+        #{item}
+     </foreach>
+    )
+    
+  </select>
+  
+  <select id="countUser" resultType="java.lang.Integer">
+  	select count(*) as count from t_user where id in (
+     <foreach collection="list" item="item" separator=",">
+        #{item}
+     </foreach>
+     )
+  </select>
+  
+  <sql id="columnsName">
+     id,id,name,age,school_id
+  </sql>
+  
+   
+  
+</mapper>

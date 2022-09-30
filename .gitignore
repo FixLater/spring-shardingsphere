@@ -8,3 +8,5 @@
 /httpRequests/
 /.idea/
 /target
+spring-sharding.iml
+src/main/resources/jdbc.properties

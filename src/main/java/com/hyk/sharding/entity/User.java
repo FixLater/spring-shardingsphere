@@ -1,22 +1,14 @@
 package com.hyk.sharding.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
 
-@Entity
-@Table(name = "t_user")
 public class User {
 
-    @Id
     private String id;
     
     private String name;
     
     private Integer age;
 
-    @Column(name = "school_id")
     private String schoolId;
 
     public String getSchoolId() {
