@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:shardingsphere="http://shardingsphere.apache.org/schema/shardingsphere/datasource"
+       xmlns:sharding="http://shardingsphere.apache.org/schema/shardingsphere/sharding"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context.xsd
+                           http://shardingsphere.apache.org/schema/shardingsphere/datasource
+                           http://shardingsphere.apache.org/schema/shardingsphere/datasource/datasource.xsd
+                           http://shardingsphere.apache.org/schema/shardingsphere/sharding
+                           http://shardingsphere.apache.org/schema/shardingsphere/sharding/sharding.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+    <context:component-scan base-package="com.hyk.sharding" />
+    <bean id="sqlSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="shardingDataSource"/>
+        <property name="packagesToScan" value="com.hyk.sharding"/>
+    </bean>
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:jdbc.properties</value>
+            </list>
+        </property>
+        <property name="ignoreUnresolvablePlaceholders" value="true" />
+    </bean>
+
+    <bean id="dataSource1" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+        <property name="driverClassName" value="${jdbc.driverClass1}"/>
+        <property name="url" value="${jdbc.url1}"/>
+        <property name="username" value="${jdbc.user1}"/>
+        <property name="password" value="${jdbc.password1}"/>
+        <property name="initialSize" value="${jdbc.initialSize1}"/>
+        <property name="maxActive" value="${jdbc.maxActive1}"/>
+        <property name="minIdle" value="${jdbc.minIdle1}"/>
+        <property name="maxWait" value="${jdbc.maxWait1}"/>
+        <property name="validationQuery" value="SELECT 1"/>
+        <property name="testOnBorrow" value="false"/>
+        <property name="testOnReturn" value="false"/>
+        <property name="testWhileIdle" value="true"/>
+        <property name="timeBetweenEvictionRunsMillis" value="60000"/>
+        <property name="minEvictableIdleTimeMillis" value="25200000"/> <!--配置一个连接在池中最小生存的时间，单位是毫秒-->
+        <property name="removeAbandoned" value="true"/>
+        <property name="removeAbandonedTimeout" value="1800"/>   <!--1800秒，也就是30分钟 -->
+        <property name="logAbandoned" value="true"/>
+    </bean>
+    <bean id="dataSource2" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+        <property name="driverClassName" value="${jdbc.driverClass2}"/>
+        <property name="url" value="${jdbc.url2}"/>
+        <property name="username" value="${jdbc.user2}"/>
+        <property name="password" value="${jdbc.password2}"/>
+        <property name="initialSize" value="${jdbc.initialSize2}"/>
+        <property name="maxActive" value="${jdbc.maxActive2}"/>
+        <property name="minIdle" value="${jdbc.minIdle2}"/>
+        <property name="maxWait" value="${jdbc.maxWait2}"/>
+        <property name="validationQuery" value="SELECT 1"/>
+        <property name="testOnBorrow" value="false"/>
+        <property name="testOnReturn" value="false"/>
+        <property name="testWhileIdle" value="true"/>
+        <property name="timeBetweenEvictionRunsMillis" value="60000"/>
+        <property name="minEvictableIdleTimeMillis" value="25200000"/> <!--配置一个连接在池中最小生存的时间，单位是毫秒-->
+        <property name="removeAbandoned" value="true"/>
+        <property name="removeAbandonedTimeout" value="1800"/>   <!--1800秒，也就是30分钟 -->
+        <property name="logAbandoned" value="true"/>
+    </bean>
+    <bean id="dataSource3" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+        <property name="driverClassName" value="${jdbc.driverClass3}"/>
+        <property name="url" value="${jdbc.url3}"/>
+        <property name="username" value="${jdbc.user3}"/>
+        <property name="password" value="${jdbc.password3}"/>
+        <property name="initialSize" value="${jdbc.initialSize3}"/>
+        <property name="maxActive" value="${jdbc.maxActive3}"/>
+        <property name="minIdle" value="${jdbc.minIdle3}"/>
+        <property name="maxWait" value="${jdbc.maxWait3}"/>
+        <property name="validationQuery" value="SELECT 1"/>
+        <property name="testOnBorrow" value="false"/>
+        <property name="testOnReturn" value="false"/>
+        <property name="testWhileIdle" value="true"/>
+        <property name="timeBetweenEvictionRunsMillis" value="60000"/>
+        <property name="minEvictableIdleTimeMillis" value="25200000"/> <!--配置一个连接在池中最小生存的时间，单位是毫秒-->
+        <property name="removeAbandoned" value="true"/>
+        <property name="removeAbandonedTimeout" value="1800"/>   <!--1800秒，也就是30分钟 -->
+        <property name="logAbandoned" value="true"/>
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager" >
+        <property name="sessionFactory" ref="sqlSessionFactory" />
+    </bean>
+    <tx:annotation-driven />
+
+    <sharding:sharding-algorithm id="databaseAlgorithmRef" type="CLASS_BASED">
+        <props>
+            <prop key="strategy">STANDARD</prop>
+            <prop key="algorithmClassName">com.hyk.sharding.algorithm.SplitDatabaseAlgorithm</prop>
+        </props>
+    </sharding:sharding-algorithm>
+
+    <sharding:standard-strategy id="tableStrategy" sharding-column="school_id" algorithm-ref="databaseAlgorithmRef" />
+
+    <sharding:key-generate-algorithm id="snowflakeAlgorithm" type="SNOWFLAKE">
+    </sharding:key-generate-algorithm>
+
+    <sharding:rule id="shardingRule">
+        <sharding:table-rules>
+            <sharding:table-rule logic-table="t_user" database-strategy-ref="tableStrategy" />
+        </sharding:table-rules>
+    </sharding:rule>
+
+    <!-- 配置ShardingSphereDataSource -->
+    <shardingsphere:data-source id="shardingDataSource" data-source-names="dataSource1,dataSource2,dataSource3" rule-refs="shardingRule">
+        <props>
+            <prop key="sql-show">true</prop>
+        </props>
+    </shardingsphere:data-source>
+
+</beans>
